@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marco Carnevali — Principal Software Engineer</title>
+  <style>
+    :root { --bg:#f8f8f8; --fg:#000; --muted:#555; --line:#111; }
+    html,body{height:100%}
+    body{
+      margin:0; padding:48px; background:var(--bg); color:var(--fg);
+      font:20px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+    #content{max-width:820px}
+    .line{display:block; white-space:pre-wrap;}
+    .line .text{white-space:pre-wrap}
+
+    /* Smooth caret */
+    .caret{display:inline-block; margin-left:2px; animation:blinkSmooth 1.2s ease-in-out infinite}
+    .caret::after{content:"▍"}
+    @keyframes blinkSmooth{0%,100%{opacity:1} 50%{opacity:0}}
+
+    /* Footer grid */
+    footer{margin-top:48px}
+    .grid{display:grid; grid-template-columns:repeat(3,minmax(70px,1fr)); gap:16px; max-width:300px}
+    .tile{display:flex; flex-direction:column; align-items:center; gap:6px; text-decoration:none; color:inherit; font-size:14px; opacity:0; transform:scale(.9) translateY(8px);}
+    .icon{height:60px; width:60px; border:1.5px solid var(--line); border-radius:16px; display:grid; place-items:center; transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease}
+    .icon svg{height:26px; width:26px}
+    .icon span{font-size:20px}
+    .tile:hover .icon{transform:translateY(-3px) scale(1.1); box-shadow:0 6px 18px rgba(0,0,0,0.15); border-color:#000}
+    .tile:hover{color:var(--fg)}
+
+    /* Appear animation for tiles */
+    @keyframes springPop {0%{opacity:0; transform:scale(.9) translateY(8px)} 60%{opacity:1; transform:scale(1.05) translateY(-2px)} 100%{opacity:1; transform:scale(1) translateY(0)}}
+    .show .tile{ animation: springPop .5s cubic-bezier(.22,1,.36,1) forwards }
+    .show .tile:nth-child(1){ animation-delay:.45s }
+    .show .tile:nth-child(2){ animation-delay:.6s }
+    .show .tile:nth-child(3){ animation-delay:.75s }
+
+    @media (max-width:560px){ body{padding:28px} .grid{grid-template-columns:repeat(3,1fr)} }
+  </style>
+</head>
+<body>
+  <main id="content" aria-live="polite" aria-atomic="true"></main>
+
+  <!-- Footer links -->
+  <footer id="footerLinks">
+    <div class="grid">
+      <a class="tile" href="https://www.linkedin.com/in/marcocarnevali/">
+        <div class="icon"><span>in</span></div>
+        <div>LinkedIn</div>
+      </a>
+      <a class="tile" href="https://github.com/MarcoCarnevali">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-4 1.5-4-2-6-2m12 4v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.77 5.07 5.07 0 0 0-.09-3.77S17.91.79 15 2.6a13.38 13.38 0 0 0-6 0C6.09.79 5.09.22 5.09.22a5.07 5.07 0 0 0-.09 3.77A5.44 5.44 0 0 0 3.5 8.5c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 19v4"/>
+          </svg>
+        </div>
+        <div>GitHub</div>
+      </a>
+      <a class="tile" href="mailto:marcocarnevali@me.com">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16v16H4z"/>
+            <path d="M4 6l8 6 8-6"/>
+          </svg>
+        </div>
+        <div>Email</div>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      const LINES = [
+        "Hello. I’m Marco.",
+        "I’m a Principal Software Engineer building reliable and scalable software systems.",
+        "I’m architecting. Coding. Testing. Shipping.",
+        "Obsessed with clarity, craft, and systems that recover predictably.",
+      ];
+      const SPEED = 28;
+      const PAUSE_BETWEEN = 400;
+      const INITIAL_CURSOR_DELAY = 1200;
+      const FOOTER_DELAY_AFTER_TEXT = 1200;
+
+      const container = document.getElementById('content');
+      const footer = document.getElementById('footerLinks');
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function createLine(){
+        const line = document.createElement('div');
+        line.className = 'line';
+        const textSpan = document.createElement('span');
+        textSpan.className = 'text';
+        const caret = document.createElement('span');
+        caret.className = 'caret';
+        line.appendChild(textSpan);
+        line.appendChild(caret);
+        return { line, textSpan, caret };
+      }
+
+      function removeCaret(lineEl){
+        const c = lineEl.querySelector('.caret');
+        if (c) c.remove();
+      }
+
+      function type(text, textSpan){
+        return new Promise(resolve => {
+          let i = 0;
+          const tick = () => {
+            if (i < text.length){
+              textSpan.textContent += text.charAt(i++);
+              setTimeout(tick, SPEED);
+            } else { resolve(); }
+          };
+          tick();
+        });
+      }
+
+      async function run(){
+        let { line, textSpan } = createLine();
+        container.appendChild(line);
+
+        if (reduce){
+          for (let i=0;i<LINES.length;i++){
+            textSpan.textContent = LINES[i];
+            removeCaret(line);
+            if (i < LINES.length - 1){
+              container.appendChild(document.createElement('br'));
+              ({ line, textSpan } = createLine());
+              container.appendChild(line);
+            }
+          }
+          line.classList.add('caret');
+          footer.classList.add('show');
+          return;
+        }
+
+        await new Promise(r => setTimeout(r, INITIAL_CURSOR_DELAY));
+
+        for (let i=0;i<LINES.length;i++){
+          await type(LINES[i], textSpan);
+          removeCaret(line);
+          if (i < LINES.length - 1){
+            container.appendChild(document.createElement('br'));
+            ({ line, textSpan } = createLine());
+            container.appendChild(line);
+          }
+        }
+
+        const eofCaret = document.createElement('span');
+        eofCaret.className = 'caret';
+        line.appendChild(eofCaret);
+
+        await new Promise(r => setTimeout(r, FOOTER_DELAY_AFTER_TEXT));
+        footer.classList.add('show');
+      }
+
+      run();
+    })();
+  </script>
+</body>
+</html>
