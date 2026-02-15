@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Marco Carnevali — Principal Software Engineer</title>
+  <title>Marco Carnevali &mdash; Principal Software Engineer</title>
   <style>
     :root { --bg:#f8f8f8; --fg:#000; --muted:#555; --line:#111; --accent:#2ea043; }
     html,body{height:100%}
@@ -11,6 +11,7 @@
       margin:0; padding:48px; background:var(--bg); color:var(--fg);
       font:20px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
       display:flex; flex-direction:column; justify-content:center;
+      min-height:100vh;
       min-height:100svh;
       gap:32px;
     }
@@ -59,7 +60,7 @@
 </head>
 <body>
   <main id="content" aria-live="polite" aria-atomic="true"></main>
-  <button id="skipBtn" aria-label="Skip animation">Skip animation [Enter]</button>
+  <button id="skipBtn" type="button" aria-label="Skip animation">Skip animation [Enter]</button>
 
   <!-- Footer links -->
   <footer id="footerLinks">
@@ -78,7 +79,7 @@
         <div>Email</div>
       </a>
     </div>
-    <div class="copyright">© <span id="year"></span> Marco Carnevali. All rights reserved.</div>
+    <div class="copyright">&copy; <span id="year"></span> Marco Carnevali. All rights reserved.</div>
   </footer>
 
   <script>
@@ -89,7 +90,7 @@
         "Hello. I’m Marco.",
         "I’m a Principal Software Engineer building reliable and scalable software systems.",
         "I’m architecting. Coding. Testing. Shipping.",
-        "Building with AI. Obsessed with clarity, craft, and systems that recover predictably.",
+        "Mainly focused on mobile. Building with AI. Obsessed with clarity, craft, and systems that recover predictably.",
       ];
       const SPEED = 20;
       const PAUSE_BETWEEN = 400;
