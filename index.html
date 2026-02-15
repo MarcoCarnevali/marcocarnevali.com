@@ -25,7 +25,7 @@
 
     /* Footer grid */
     footer{margin-top:24px}
-    .grid{display:grid; grid-template-columns:repeat(3,minmax(70px,1fr)); gap:16px; max-width:300px; justify-items:start}
+    .grid{display:grid; grid-template-columns:repeat(2,minmax(70px,1fr)); gap:16px; max-width:200px; justify-items:start}
     .tile{display:flex; flex-direction:column; align-items:flex-start; gap:6px; text-decoration:none; color:inherit; font-size:14px; opacity:0; transform:scale(.9) translateY(8px);}
     .icon{height:60px; width:60px; border:1.5px solid var(--line); border-radius:16px; display:grid; place-items:center; transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease}
     .icon svg{height:26px; width:26px}
@@ -48,13 +48,12 @@
     .show .tile{ animation: springPop .5s cubic-bezier(.22,1,.36,1) forwards }
     .show .tile:nth-child(1){ animation-delay:.45s }
     .show .tile:nth-child(2){ animation-delay:.6s }
-    .show .tile:nth-child(3){ animation-delay:.75s }
 
     .copyright{font-size:12px; color:var(--muted); margin-top:32px; padding-top:16px;}
 
     @media (max-width:560px){
       body{padding:28px; gap:24px; font-size:18px}
-      .grid{grid-template-columns:repeat(3,1fr)}
+      .grid{grid-template-columns:repeat(2,1fr)}
     }
   </style>
 </head>
@@ -68,14 +67,6 @@
       <a class="tile" href="https://www.linkedin.com/in/marcocarnevali/">
         <div class="icon"><span>in</span></div>
         <div>LinkedIn</div>
-      </a>
-      <a class="tile" href="https://github.com/MarcoCarnevali">
-        <div class="icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 19c-4 1.5-4-2-6-2m12 4v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.77 5.07 5.07 0 0 0-.09-3.77S17.91.79 15 2.6a13.38 13.38 0 0 0-6 0C6.09.79 5.09.22 5.09.22a5.07 5.07 0 0 0-.09 3.77A5.44 5.44 0 0 0 3.5 8.5c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 19v4"/>
-          </svg>
-        </div>
-        <div>GitHub</div>
       </a>
       <a class="tile" href="mailto:marcocarnevali@me.com">
         <div class="icon">
