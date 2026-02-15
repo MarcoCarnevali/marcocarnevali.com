@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Marco Carnevali — Principal Software Engineer</title>
+  <title>Marco Carnevali &mdash; Principal Software Engineer</title>
   <style>
-    :root { --bg:#f8f8f8; --fg:#000; --muted:#555; --line:#111; }
+    :root { --bg:#f8f8f8; --fg:#000; --muted:#555; --line:#111; --accent:#2ea043; }
     html,body{height:100%}
     body{
       margin:0; padding:48px; background:var(--bg); color:var(--fg);
       font:20px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
       display:flex; flex-direction:column; justify-content:center;
+      min-height:100vh;
       min-height:100svh;
       gap:32px;
     }
@@ -19,37 +20,47 @@
     .line .text{white-space:pre-wrap}
 
     /* Smooth caret */
-    .caret{display:inline-block; margin-left:2px; animation:blinkSmooth 1.2s ease-in-out infinite}
+    .caret{display:inline-block; margin-left:2px; animation:blinkSmooth 1.2s ease-in-out infinite; color:var(--accent)}
     .caret::after{content:"▍"}
     @keyframes blinkSmooth{0%,100%{opacity:1} 50%{opacity:0}}
 
     /* Footer grid */
     footer{margin-top:24px}
-    .grid{display:grid; grid-template-columns:repeat(3,minmax(70px,1fr)); gap:16px; max-width:300px; justify-items:start}
+    .grid{display:grid; grid-template-columns:repeat(2,minmax(70px,1fr)); gap:16px; max-width:200px; justify-items:start}
     .tile{display:flex; flex-direction:column; align-items:flex-start; gap:6px; text-decoration:none; color:inherit; font-size:14px; opacity:0; transform:scale(.9) translateY(8px);}
     .icon{height:60px; width:60px; border:1.5px solid var(--line); border-radius:16px; display:grid; place-items:center; transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease}
     .icon svg{height:26px; width:26px}
     .icon span{font-size:20px}
-    .tile:hover .icon{transform:translateY(-3px) scale(1.1); box-shadow:0 6px 18px rgba(0,0,0,0.15); border-color:#000}
+    .tile:hover .icon{transform:translateY(-3px) scale(1.1); box-shadow:0 6px 18px rgba(0,0,0,0.15); border-color:var(--accent)}
     .tile:hover{color:var(--fg)}
+
+    #skipBtn{
+      position:fixed; bottom:24px; right:24px;
+      padding:6px 12px; background:transparent; color:var(--muted);
+      border:1px solid var(--muted); border-radius:6px; font-size:11px; cursor:pointer;
+      opacity:0; pointer-events:none; transition:opacity .3s, color .2s, border-color .2s;
+      font-family:inherit;
+    }
+    #skipBtn.visible{opacity:0.6; pointer-events:auto}
+    #skipBtn:hover{opacity:1; color:var(--accent); border-color:var(--accent)}
 
     /* Appear animation for tiles */
     @keyframes springPop {0%{opacity:0; transform:scale(.9) translateY(8px)} 60%{opacity:1; transform:scale(1.05) translateY(-2px)} 100%{opacity:1; transform:scale(1) translateY(0)}}
     .show .tile{ animation: springPop .5s cubic-bezier(.22,1,.36,1) forwards }
     .show .tile:nth-child(1){ animation-delay:.45s }
     .show .tile:nth-child(2){ animation-delay:.6s }
-    .show .tile:nth-child(3){ animation-delay:.75s }
 
     .copyright{font-size:12px; color:var(--muted); margin-top:32px; padding-top:16px;}
 
     @media (max-width:560px){
       body{padding:28px; gap:24px; font-size:18px}
-      .grid{grid-template-columns:repeat(3,1fr)}
+      .grid{grid-template-columns:repeat(2,1fr)}
     }
   </style>
 </head>
 <body>
   <main id="content" aria-live="polite" aria-atomic="true"></main>
+  <button id="skipBtn" type="button" aria-label="Skip animation">Skip animation [Enter]</button>
 
   <!-- Footer links -->
   <footer id="footerLinks">
@@ -58,15 +69,7 @@
         <div class="icon"><span>in</span></div>
         <div>LinkedIn</div>
       </a>
-      <a class="tile" href="https://github.com/MarcoCarnevali">
-        <div class="icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 19c-4 1.5-4-2-6-2m12 4v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.77 5.07 5.07 0 0 0-.09-3.77S17.91.79 15 2.6a13.38 13.38 0 0 0-6 0C6.09.79 5.09.22 5.09.22a5.07 5.07 0 0 0-.09 3.77A5.44 5.44 0 0 0 3.5 8.5c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 19v4"/>
-          </svg>
-        </div>
-        <div>GitHub</div>
-      </a>
-      <a class="tile" href="mailto:marcocarnevali@me.com">
+      <a class="tile" href="mailto:me@marcocarnevali.com">
         <div class="icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 4h16v16H4z"/>
@@ -76,7 +79,7 @@
         <div>Email</div>
       </a>
     </div>
-    <div class="copyright">© <span id="year"></span> Marco Carnevali. All rights reserved.</div>
+    <div class="copyright">&copy; <span id="year"></span> Marco Carnevali. All rights reserved.</div>
   </footer>
 
   <script>
@@ -85,18 +88,30 @@
     (function(){
       const LINES = [
         "Hello. I’m Marco.",
-        "I’m a Principal Software Engineer building reliable and scalable software systems.",
+        "I’m a Principal Software Engineer building reliable and scalable software systems for mobile.",
         "I’m architecting. Coding. Testing. Shipping.",
-        "Obsessed with clarity, craft, and systems that recover predictably.",
+        "Building with AI. Obsessed with clarity, craft, and resilient systems.",
       ];
-      const SPEED = 28;
+      const SPEED = 20;
       const PAUSE_BETWEEN = 400;
-      const INITIAL_CURSOR_DELAY = 1200;
-      const FOOTER_DELAY_AFTER_TEXT = 1200;
+      const INITIAL_CURSOR_DELAY = 800;
+      const FOOTER_DELAY_AFTER_TEXT = 800;
 
       const container = document.getElementById('content');
       const footer = document.getElementById('footerLinks');
+      const skipBtn = document.getElementById('skipBtn');
       const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      let isSkipped = false;
+
+      function skip(){
+        if (isSkipped) return;
+        isSkipped = true;
+        skipBtn.classList.remove('visible');
+      }
+
+      skipBtn.addEventListener('click', skip);
+      window.addEventListener('keydown', (e) => { if(e.key === 'Enter') skip(); });
 
       function createLine(){
         const line = document.createElement('div');
@@ -119,6 +134,11 @@
         return new Promise(resolve => {
           let i = 0;
           const tick = () => {
+            if (isSkipped) {
+              textSpan.textContent = text;
+              resolve();
+              return;
+            }
             if (i < text.length){
               textSpan.textContent += text.charAt(i++);
               setTimeout(tick, SPEED);
@@ -129,27 +149,20 @@
       }
 
       async function run(){
-        let { line, textSpan } = createLine();
-        container.appendChild(line);
-
-        if (reduce){
-          for (let i=0;i<LINES.length;i++){
-            textSpan.textContent = LINES[i];
-            removeCaret(line);
-            if (i < LINES.length - 1){
-              container.appendChild(document.createElement('br'));
-              ({ line, textSpan } = createLine());
-              container.appendChild(line);
-            }
-          }
-          line.classList.add('caret');
-          footer.classList.add('show');
+        if (reduce) {
+          showInstantly();
           return;
         }
+
+        skipBtn.classList.add('visible');
+
+        let { line, textSpan } = createLine();
+        container.appendChild(line);
 
         await new Promise(r => setTimeout(r, INITIAL_CURSOR_DELAY));
 
         for (let i=0;i<LINES.length;i++){
+          if (isSkipped) break;
           await type(LINES[i], textSpan);
           removeCaret(line);
           if (i < LINES.length - 1){
@@ -159,12 +172,33 @@
           }
         }
 
-        const eofCaret = document.createElement('span');
-        eofCaret.className = 'caret';
-        line.appendChild(eofCaret);
+        if (isSkipped) {
+          showInstantly();
+        } else {
+          const eofCaret = document.createElement('span');
+          eofCaret.className = 'caret';
+          line.appendChild(eofCaret);
+          skipBtn.classList.remove('visible');
+          await new Promise(r => setTimeout(r, FOOTER_DELAY_AFTER_TEXT));
+          footer.classList.add('show');
+        }
+      }
 
-        await new Promise(r => setTimeout(r, FOOTER_DELAY_AFTER_TEXT));
+      function showInstantly(){
+        container.innerHTML = '';
+        for (let i=0;i<LINES.length;i++){
+          const { line, textSpan } = createLine();
+          textSpan.textContent = LINES[i];
+          removeCaret(line);
+          container.appendChild(line);
+          if (i < LINES.length - 1){
+            container.appendChild(document.createElement('br'));
+          } else {
+            line.appendChild(document.createElement('span')).className = 'caret';
+          }
+        }
         footer.classList.add('show');
+        skipBtn.classList.remove('visible');
       }
 
       run();
