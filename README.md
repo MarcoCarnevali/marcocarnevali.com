@@ -17,7 +17,7 @@ Then open your browser at `http://localhost:3000`.
 - Terminal-like typing animation with skip functionality.
 - Professional "terminal" aesthetic with green accents.
 - Responsive design for mobile and desktop.
-- Social links (LinkedIn, GitHub, Email).
+- Social links (LinkedIn, Email).
 - Dynamic copyright year.
 
 ## Deployment
