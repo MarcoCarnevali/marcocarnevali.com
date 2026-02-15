@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Marco Carnevali — Principal Software Engineer</title>
   <style>
-    :root { --bg:#f8f8f8; --fg:#000; --muted:#555; --line:#111; }
+    :root { --bg:#f8f8f8; --fg:#000; --muted:#555; --line:#111; --accent:#2ea043; }
     html,body{height:100%}
     body{
       margin:0; padding:48px; background:var(--bg); color:var(--fg);
@@ -19,7 +19,7 @@
     .line .text{white-space:pre-wrap}
 
     /* Smooth caret */
-    .caret{display:inline-block; margin-left:2px; animation:blinkSmooth 1.2s ease-in-out infinite}
+    .caret{display:inline-block; margin-left:2px; animation:blinkSmooth 1.2s ease-in-out infinite; color:var(--accent)}
     .caret::after{content:"▍"}
     @keyframes blinkSmooth{0%,100%{opacity:1} 50%{opacity:0}}
 
@@ -30,8 +30,18 @@
     .icon{height:60px; width:60px; border:1.5px solid var(--line); border-radius:16px; display:grid; place-items:center; transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease}
     .icon svg{height:26px; width:26px}
     .icon span{font-size:20px}
-    .tile:hover .icon{transform:translateY(-3px) scale(1.1); box-shadow:0 6px 18px rgba(0,0,0,0.15); border-color:#000}
+    .tile:hover .icon{transform:translateY(-3px) scale(1.1); box-shadow:0 6px 18px rgba(0,0,0,0.15); border-color:var(--accent)}
     .tile:hover{color:var(--fg)}
+
+    #skipBtn{
+      position:fixed; bottom:24px; right:24px;
+      padding:6px 12px; background:transparent; color:var(--muted);
+      border:1px solid var(--muted); border-radius:6px; font-size:11px; cursor:pointer;
+      opacity:0; pointer-events:none; transition:opacity .3s, color .2s, border-color .2s;
+      font-family:inherit;
+    }
+    #skipBtn.visible{opacity:0.6; pointer-events:auto}
+    #skipBtn:hover{opacity:1; color:var(--accent); border-color:var(--accent)}
 
     /* Appear animation for tiles */
     @keyframes springPop {0%{opacity:0; transform:scale(.9) translateY(8px)} 60%{opacity:1; transform:scale(1.05) translateY(-2px)} 100%{opacity:1; transform:scale(1) translateY(0)}}
@@ -50,6 +60,7 @@
 </head>
 <body>
   <main id="content" aria-live="polite" aria-atomic="true"></main>
+  <button id="skipBtn" aria-label="Skip animation">Skip animation [Enter]</button>
 
   <!-- Footer links -->
   <footer id="footerLinks">
@@ -89,14 +100,26 @@
         "I’m architecting. Coding. Testing. Shipping.",
         "Obsessed with clarity, craft, and systems that recover predictably.",
       ];
-      const SPEED = 28;
+      const SPEED = 20;
       const PAUSE_BETWEEN = 400;
-      const INITIAL_CURSOR_DELAY = 1200;
-      const FOOTER_DELAY_AFTER_TEXT = 1200;
+      const INITIAL_CURSOR_DELAY = 800;
+      const FOOTER_DELAY_AFTER_TEXT = 800;
 
       const container = document.getElementById('content');
       const footer = document.getElementById('footerLinks');
+      const skipBtn = document.getElementById('skipBtn');
       const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      let isSkipped = false;
+
+      function skip(){
+        if (isSkipped) return;
+        isSkipped = true;
+        skipBtn.classList.remove('visible');
+      }
+
+      skipBtn.addEventListener('click', skip);
+      window.addEventListener('keydown', (e) => { if(e.key === 'Enter') skip(); });
 
       function createLine(){
         const line = document.createElement('div');
@@ -119,6 +142,11 @@
         return new Promise(resolve => {
           let i = 0;
           const tick = () => {
+            if (isSkipped) {
+              textSpan.textContent = text;
+              resolve();
+              return;
+            }
             if (i < text.length){
               textSpan.textContent += text.charAt(i++);
               setTimeout(tick, SPEED);
@@ -129,27 +157,20 @@
       }
 
       async function run(){
-        let { line, textSpan } = createLine();
-        container.appendChild(line);
-
-        if (reduce){
-          for (let i=0;i<LINES.length;i++){
-            textSpan.textContent = LINES[i];
-            removeCaret(line);
-            if (i < LINES.length - 1){
-              container.appendChild(document.createElement('br'));
-              ({ line, textSpan } = createLine());
-              container.appendChild(line);
-            }
-          }
-          line.classList.add('caret');
-          footer.classList.add('show');
+        if (reduce) {
+          showInstantly();
           return;
         }
+
+        skipBtn.classList.add('visible');
+
+        let { line, textSpan } = createLine();
+        container.appendChild(line);
 
         await new Promise(r => setTimeout(r, INITIAL_CURSOR_DELAY));
 
         for (let i=0;i<LINES.length;i++){
+          if (isSkipped) break;
           await type(LINES[i], textSpan);
           removeCaret(line);
           if (i < LINES.length - 1){
@@ -159,12 +180,33 @@
           }
         }
 
-        const eofCaret = document.createElement('span');
-        eofCaret.className = 'caret';
-        line.appendChild(eofCaret);
+        if (isSkipped) {
+          showInstantly();
+        } else {
+          const eofCaret = document.createElement('span');
+          eofCaret.className = 'caret';
+          line.appendChild(eofCaret);
+          skipBtn.classList.remove('visible');
+          await new Promise(r => setTimeout(r, FOOTER_DELAY_AFTER_TEXT));
+          footer.classList.add('show');
+        }
+      }
 
-        await new Promise(r => setTimeout(r, FOOTER_DELAY_AFTER_TEXT));
+      function showInstantly(){
+        container.innerHTML = '';
+        for (let i=0;i<LINES.length;i++){
+          const { line, textSpan } = createLine();
+          textSpan.textContent = LINES[i];
+          removeCaret(line);
+          container.appendChild(line);
+          if (i < LINES.length - 1){
+            container.appendChild(document.createElement('br'));
+          } else {
+            line.appendChild(document.createElement('span')).className = 'caret';
+          }
+        }
         footer.classList.add('show');
+        skipBtn.classList.remove('visible');
       }
 
       run();
